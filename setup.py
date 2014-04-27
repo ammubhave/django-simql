@@ -18,6 +18,7 @@ setup(
     url='https://github.com/ammubhave/django-simql',
     packages=[
         'django_simql',
-        'django_simql.backend',
+        'django_simql.db',
+        'django_simql.auth',
     ],
 )
