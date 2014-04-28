@@ -1,4 +1,4 @@
-from django.db.models
+import django.db.models
 
 
 class User(models.Model, models.PermissionsMixin):
