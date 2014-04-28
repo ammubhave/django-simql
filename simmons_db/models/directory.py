@@ -1,4 +1,4 @@
-import django.db.models
+from django.db import models
 
 
 class Directory(models.Model):
@@ -25,3 +25,4 @@ class Directory(models.Model):
 
     class Meta:
         db_table = 'directory'
+        app_label = 'simmons_db'

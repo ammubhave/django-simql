@@ -1,10 +1,27 @@
 from django.db import models
-from django_simql.auth.models import User
+from django.conf import settings
 from constants import COMMON_PERMISSIONS
 
 
+class UserPermission(models.Model):
+    user = models.OneToOneField(settings.AUTH_USER_MODEL)
+    permissions_json = models.TextField(default='[]')  # a JSON encoded list of permissions
+
+    def _get_permissions(self):
+        return json.loads(self.permissions_json)
+
+    def _set_permissions(self, permissions):
+        assert type(permissions) == list
+        self.permissions_json = json.dumps(permissions)
+
+    permissions = property(_get_permissions, _set_permissions)
+
+    class Meta:
+        app_label = 'tgs'
+
+
 class App(models.Model):
-    owner = models.ForeignKey(User)
+    owner = models.ForeignKey(settings.AUTH_USER_MODEL)
     name = models.TextField()
     description = models.TextField()
     app_key = models.CharField(max_length=32)
@@ -35,6 +52,9 @@ class App(models.Model):
     def __unicode__(self):
         return "{0} ({1})".format(self.app_key, self.owner)
 
+    class Meta:
+        app_label = 'tgs'
+
 
 class AccessToken(models.Model):
     access_token = models.CharField(max_length=32, unique=True)
@@ -54,9 +74,11 @@ class AccessToken(models.Model):
         return "{0}".format(self.access_token)
 
     @staticmethod
-    def random():
+    def random(permissions):
         import string, random, datetime
-        access_token = AccessToken(access_token=''.join(random.choice(string.ascii_uppercase + string.digits + string.ascii_lowercase) for _ in range(l),
-                                                        expires=datetime.datetime.now() + datetime.timedelta(hours=1))
-        access_token.permissions = COMMON_PERMISSIONS
+        access_token = AccessToken(access_token=''.join(random.choice(string.ascii_uppercase + string.digits + string.ascii_lowercase) for _ in range(l)), expires=datetime.datetime.now() + datetime.timedelta(hours=1))
+        access_token.permissions = permissions
         return access_token
+
+    class Meta:
+        app_label = 'tgs'
