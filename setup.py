@@ -20,5 +20,10 @@ setup(
         'django_simql',
         'django_simql.db',
         'django_simql.auth',
+        'simmons_db',
+        'simmons_db.models',
+    ],
+    install_requires=[
+        "djangotoolbox==1.6.2",
     ],
 )
